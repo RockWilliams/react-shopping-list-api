@@ -20,11 +20,46 @@ const register = async (req, res) => {
 		const createdProfile = await db.Profile.create({
 			username: req.body.username,
 		});
-		req.session.user = createdUser;
+		createdUser.profile = await createdProfile._id;
+		await createdUser.save();
+		req.session.user = await createdUser;
 		return res.status(201).json({
 			status: 201,
 			message: "Success",
-			createdUser: createdProfile,
+			createdUser: createdUser,
+		});
+	} catch (err) {
+		console.log(err);
+		return res.status(500).json({
+			status: 500,
+			message: "Something went wrong please try again.",
+		});
+	}
+};
+
+const login = async (req, res) => {
+	try {
+		const foundUser = await db.Auth.findOne({ email: req.body.email });
+		if (!foundUser) {
+			return res.status(401).json({
+				status: 401,
+				message: "Incorrect Email or Password",
+			});
+		}
+		const match = await bcrypt.compare(
+			req.body.password,
+			foundUser.password
+		);
+		if (!match) {
+			return res.status(401).json({
+				status: 401,
+				message: "Incorrect Email or Password",
+			});
+		}
+		req.session.user = await foundUser;
+		return res.status(200).json({
+			status: 200,
+			message: "Success",
 		});
 	} catch (err) {
 		console.log(err);
@@ -37,4 +72,5 @@ const register = async (req, res) => {
 
 module.exports = {
 	register,
+	login,
 };
