@@ -41,6 +41,7 @@ app.use("/api/v1/auth", routes.auth);
 app.use("/api/v1/store", routes.store);
 app.use("/api/v1/product", routes.product);
 app.use("/api/v1/profile", routes.profile);
+app.use("/api/v1/list", routes.list);
 
 app.listen(PORT, () => {
 	console.log(`server running on http://localhost:${PORT}`);
