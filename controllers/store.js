@@ -11,11 +11,12 @@ const createStore = async (req, res) => {
 		);
 		console.log(currentUser);
 		await currentUser.profile.stores.push(createdStore._id);
-		await currentUser.save();
+		await currentUser.profile.save();
 		return res.status(201).json({
 			status: 201,
 			message: "Success",
 			store: createdStore,
+			user: currentUser,
 		});
 	} catch (err) {
 		console.log(err);
@@ -26,7 +27,7 @@ const createStore = async (req, res) => {
 	}
 };
 
-const viewStore = async (req, res) => {
+const viewStores = async (req, res) => {
 	try {
 		const foundUser = await db.Profile;
 		const foundStore = await db.Store.find({});
@@ -41,4 +42,5 @@ const viewStore = async (req, res) => {
 
 module.exports = {
 	createStore,
+	viewStores,
 };
